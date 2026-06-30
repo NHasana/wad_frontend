@@ -1,16 +1,29 @@
-let _accessToken = null;
+const ACCESS_KEY = "access_token";
+const REFRESH_KEY = "rf_token";
 
 export const TokenStore = {
-  getAccessToken: () => _accessToken,
-  setAccessToken: (token) => { _accessToken = token; },
-
-  getRefreshToken: () => sessionStorage.getItem("rf_token"),
-  setRefreshToken: (token) => sessionStorage.setItem("rf_token", token),
-
-  clear: () => {
-    _accessToken = null;
-    sessionStorage.removeItem("rf_token");
+  getAccessToken() {
+    return sessionStorage.getItem(ACCESS_KEY);
   },
 
-  isLoggedIn: () => !!sessionStorage.getItem("rf_token"),
+  setAccessToken(token) {
+    sessionStorage.setItem(ACCESS_KEY, token);
+  },
+
+  getRefreshToken() {
+    return sessionStorage.getItem(REFRESH_KEY);
+  },
+
+  setRefreshToken(token) {
+    sessionStorage.setItem(REFRESH_KEY, token);
+  },
+
+  clear() {
+    sessionStorage.removeItem(ACCESS_KEY);
+    sessionStorage.removeItem(REFRESH_KEY);
+  },
+
+  isLoggedIn() {
+    return !!this.getRefreshToken();
+  },
 };

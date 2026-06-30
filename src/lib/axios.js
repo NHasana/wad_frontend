@@ -47,6 +47,15 @@ api.interceptors.response.use(
         const { data } = await axios.post("/auth/refresh", { refreshToken });
         const newToken = data.data.accessToken;
         TokenStore.setAccessToken(newToken);
+
+        window.dispatchEvent(
+  new CustomEvent("token:refreshed", {
+    detail: {
+      token: newToken,
+    },
+  })
+);
+
         processQueue(null, newToken);
         orig.headers.Authorization = `Bearer ${newToken}`;
         return api(orig);
