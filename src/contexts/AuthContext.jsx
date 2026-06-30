@@ -32,12 +32,23 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = useCallback(async (email, password) => {
-    const { data } = await axios.post("/auth/login", { email, password });
-    const { accessToken, refreshToken, user: userData } = data;
-    TokenStore.setAccessToken(accessToken);
-    TokenStore.setRefreshToken(refreshToken);
-    setUser(userData);
-  }, []);
+  const response = await axios.post("/auth/login", {
+    email,
+    password,
+  });
+
+  console.log("LOGIN RESPONSE:", response.data);
+
+  // Coba ambil data baik yang dibungkus "data" maupun yang langsung
+  const result = response.data.data || response.data;
+
+  TokenStore.setAccessToken(result.accessToken);
+  TokenStore.setRefreshToken(result.refreshToken);
+
+window.dispatchEvent(new Event("login-success"));
+
+  setUser(result.user);
+}, []);
 
   const register = useCallback(async (name, email, password) => {
     await axios.post("/auth/register", { name, email, password });
