@@ -7,7 +7,6 @@ export function TaskForm({
   initialData = null,
 }) {
   const isEdit = !!initialData;
-
   const {
     register,
     handleSubmit,
@@ -17,8 +16,8 @@ export function TaskForm({
     defaultValues: {
       title: "",
       description: "",
-      status: "todo",
-      priority: "medium",
+      status: "TODO",
+      priority: "MEDIUM",
       dueDate: "",
     },
   });
@@ -28,8 +27,8 @@ export function TaskForm({
       reset({
         title: initialData.title || "",
         description: initialData.description || "",
-        status: (initialData.status || "todo").toLowerCase(),
-        priority: (initialData.priority || "medium").toLowerCase(),
+        status: (initialData.status || "TODO").toUpperCase(),
+        priority: (initialData.priority || "MEDIUM").toUpperCase(),
         dueDate: initialData.dueDate
           ? initialData.dueDate.substring(0, 10)
           : "",
@@ -38,8 +37,8 @@ export function TaskForm({
       reset({
         title: "",
         description: "",
-        status: "todo",
-        priority: "medium",
+        status: "TODO",
+        priority: "MEDIUM",
         dueDate: "",
       });
     }
@@ -48,13 +47,10 @@ export function TaskForm({
   const submitForm = (data) => {
     const payload = {
       ...data,
-      status: data.status.toLowerCase(),
-      priority: data.priority.toLowerCase(),
+      status: data.status.toUpperCase(),
+      priority: data.priority.toUpperCase(),
       dueDate: data.dueDate || null,
     };
-
-    console.log("DATA DIKIRIM:", payload);
-
     onSubmit(payload);
   };
 
@@ -62,7 +58,6 @@ export function TaskForm({
     <div className="modal-overlay">
       <div className="modal-card">
         <h2>{isEdit ? "Edit Task" : "Buat Task Baru"}</h2>
-
         <form onSubmit={handleSubmit(submitForm)}>
           <div className="form-group">
             <label>Judul *</label>
@@ -75,7 +70,6 @@ export function TaskForm({
               <span className="error">{errors.title.message}</span>
             )}
           </div>
-
           <div className="form-group">
             <label>Deskripsi</label>
             <textarea
@@ -83,29 +77,26 @@ export function TaskForm({
               {...register("description")}
             />
           </div>
-
           <div className="form-row">
             <div className="form-group">
               <label>Status</label>
               <select {...register("status")}>
-                <option value="todo">Belum Dimulai</option>
-                <option value="in_progress">
+                <option value="TODO">Belum Dimulai</option>
+                <option value="IN_PROGRESS">
                   Sedang Dikerjakan
                 </option>
-                <option value="done">Selesai</option>
+                <option value="DONE">Selesai</option>
               </select>
             </div>
-
             <div className="form-group">
               <label>Prioritas</label>
               <select {...register("priority")}>
-                <option value="low">Rendah</option>
-                <option value="medium">Sedang</option>
-                <option value="high">Tinggi</option>
+                <option value="LOW">Rendah</option>
+                <option value="MEDIUM">Sedang</option>
+                <option value="HIGH">Tinggi</option>
               </select>
             </div>
           </div>
-
           <div className="form-group">
             <label>Tenggat Waktu</label>
             <input
@@ -113,7 +104,6 @@ export function TaskForm({
               {...register("dueDate")}
             />
           </div>
-
           <div className="form-actions">
             <button
               type="button"
@@ -122,7 +112,6 @@ export function TaskForm({
             >
               Batal
             </button>
-
             <button
               type="submit"
               className="btn-primary"

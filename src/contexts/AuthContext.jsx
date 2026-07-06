@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import api from "../lib/axios";
 import { TokenStore } from "../lib/tokenStore";
 
 const AuthContext = createContext(null);
@@ -16,9 +16,9 @@ export function AuthProvider({ children }) {
       }
       try {
         const rfToken = TokenStore.getRefreshToken();
-        const { data } = await axios.post("/auth/refresh", { refreshToken: rfToken });
+        const { data } = await api.post("/auth/refresh", { refreshToken: rfToken });
         TokenStore.setAccessToken(data.data.accessToken);
-        const { data: me } = await axios.get("/auth/me", {
+        const { data: me } = await api.get("/auth/me", {
           headers: { Authorization: `Bearer ${data.data.accessToken}` },
         });
         setUser(me.data);
@@ -32,32 +32,30 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = useCallback(async (email, password) => {
-  const response = await axios.post("/auth/login", {
-    email,
-    password,
-  });
+    const response = await api.post("/auth/login", {
+      email,
+      password,
+    });
 
-  console.log("LOGIN RESPONSE:", response.data);
+    const result = response.data.data || response.data;
 
-  // Coba ambil data baik yang dibungkus "data" maupun yang langsung
-  const result = response.data.data || response.data;
+    TokenStore.setAccessToken(result.accessToken);
+    TokenStore.setRefreshToken(result.refreshToken);
 
-  TokenStore.setAccessToken(result.accessToken);
-  TokenStore.setRefreshToken(result.refreshToken);
+    const { data: me } = await api.get("/auth/me");
+    setUser(me.data || me);
 
-window.dispatchEvent(new Event("login-success"));
-
-  setUser(result.user);
-}, []);
+    window.dispatchEvent(new Event("login-success"));
+  }, []);
 
   const register = useCallback(async (name, email, password) => {
-    await axios.post("/auth/register", { name, email, password });
+    await api.post("/auth/register", { name, email, password });
   }, []);
 
   const logout = useCallback(async () => {
     try {
       const rfToken = TokenStore.getRefreshToken();
-      await axios.post("/auth/logout", { refreshToken: rfToken }, {
+      await api.post("/auth/logout", { refreshToken: rfToken }, {
         headers: { Authorization: `Bearer ${TokenStore.getAccessToken()}` },
       });
     } catch {}
