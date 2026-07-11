@@ -48,4 +48,11 @@ jobs:
             echo '--- Reloading Nginx ---'
             sudo systemctl reload nginx
 
+            echo '--- Restarting PM2 frontend process ---'
+            pm2 restart frontend
+
+            echo '--- Saving PM2 process list ---'
+            pm2 save
+
             echo '=== Frontend deployment complete ==='
+            pm2 list
